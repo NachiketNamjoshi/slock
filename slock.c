@@ -279,9 +279,9 @@ draw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
 					XFillRectangle(dpy,
 					               locks[screen]->win,
 					               locks[screen]->gc,
-					               rrci->x + (rrci->width - squaresize) / 2,
-					               rrci->y + (rrci->height - squaresize) / 2,
-					               squaresize,
+					               rrci->x + (rrci->width - (squaresize * 20)) / 2,
+					               rrci->y + (rrci->height - squaresize) / 2 - (12*squaresize/7),
+					               squaresize * 20,
 					               squaresize);
 				XRRFreeCrtcInfo(rrci);
 			}
