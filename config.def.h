@@ -14,10 +14,10 @@ static const char *colorname[NUMCOLS] = {
 static const int failonclear = 1;
 
 /* size of square in px */
-static const int squaresize = 50;
+static const int squaresize = 100;
 
 /* default message */
-static const char * message = "Enter Your Password";
+static const char * message = "   _   _   _   _   _   _   _   _  \n  / \\ / \\ / \\ / \\ / \\ / \\ / \\ / \\ \n ( P   A   S   S   W   O   R   D )\n  \\_/ \\_/ \\_/ \\_/ \\_/ \\_/ \\_/ \\_/ ";
 
 /* text color */
 static const char * text_color = "#fbf1c7";
