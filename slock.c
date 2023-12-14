@@ -34,7 +34,13 @@ enum {
   INPUT,
   INPUT_ALT,
   FAILED,
-  NUMCOLS
+  NUMCOLS,
+};
+
+enum {
+  TXT_NORMAL,
+  TXT_FAILED,
+  NUM_TEXTCOLS,
 };
 
 struct lock {
@@ -104,7 +110,7 @@ readescapedint(const char *str, int *i) {
 }
 
   static void
-writemessage(Display *dpy, Window win, int screen)
+writemessage(Display *dpy, Window win, int screen, unsigned int fontcolor)
 {
   int len, line_len, width, height, s_width, s_height, i, k, tab_size, r, g, b, escaped_int, curr_line_len;
   XGCValues gr_values;
@@ -126,7 +132,7 @@ writemessage(Display *dpy, Window win, int screen)
   tab_size = 8 * XTextWidth(fontinfo, " ", 1);
 
   XAllocNamedColor(dpy, DefaultColormap(dpy, screen),
-      text_color, &color, &dummy);
+      text_colors[fontcolor], &color, &dummy);
 
   gr_values.font = fontinfo->fid;
   gr_values.foreground = color.pixel;
@@ -260,7 +266,7 @@ gethash(void)
 
   static void
 draw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
-    unsigned int color)
+    unsigned int color, unsigned int fontcolor)
 {
   int screen, crtc;
   XRRCrtcInfo* rrci;
@@ -285,7 +291,7 @@ draw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
               squaresize);
         XRRFreeCrtcInfo(rrci);
       }
-      writemessage(dpy, locks[screen]->win, screen);
+      writemessage(dpy, locks[screen]->win, screen, fontcolor);
     }
   } else {
     for (screen = 0; screen < nscreens; screen++) {
@@ -293,7 +299,7 @@ draw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
           locks[screen]->win,
           locks[screen]->colors[color]);
       XClearWindow(dpy, locks[screen]->win);
-      writemessage(dpy, locks[screen]->win, screen);
+      writemessage(dpy, locks[screen]->win, screen, fontcolor);
     }
   }
 }
@@ -306,7 +312,7 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
   XRRScreenChangeNotifyEvent *rre;
   char buf[32], passwd[256], *inputhash;
   int num, screen, running, failure, oldc;
-  unsigned int len, color;
+  unsigned int len, color, fontcolor;
   KeySym ksym;
   XEvent ev;
 
@@ -364,8 +370,9 @@ readpw(Display *dpy, struct xrandr *rr, struct lock **locks, int nscreens,
       }
       color = len ? (len%2 ? INPUT : INPUT_ALT)
         : ((failure || failonclear) ? FAILED : INIT);
+      fontcolor = (!len && (failure || failonclear)) ? TXT_FAILED : TXT_NORMAL;
       if (running && oldc != color) {
-        draw(dpy, rr, locks, nscreens, color);
+        draw(dpy, rr, locks, nscreens, color, fontcolor);
         oldc = color;
       }
     } else if (rr->active && ev.type == rr->evbase + RRScreenChangeNotify) {
@@ -553,7 +560,7 @@ main(int argc, char **argv) {
     die("slock: out of memory\n");
   for (nlocks = 0, s = 0; s < nscreens; s++) {
     if ((locks[s] = lockscreen(dpy, &rr, s)) != NULL) {
-      writemessage(dpy, locks[s]->win, s);
+      writemessage(dpy, locks[s]->win, s, TXT_NORMAL);
       nlocks++;
     } else {
       break;
@@ -580,7 +587,7 @@ main(int argc, char **argv) {
   }
 
   /* draw the initial rectangle */
-  draw(dpy, &rr, locks, nscreens, INIT);
+  draw(dpy, &rr, locks, nscreens, INIT, TXT_NORMAL);
 
   /* everything is now blank. Wait for the correct password */
   readpw(dpy, &rr, locks, nscreens, hash);
