@@ -3,11 +3,11 @@ static const char *user  = "nobody";
 static const char *group = "nobody";
 
 static const char *colorname[NUMCOLS] = {
-	[BG]        =   "#191b19",     /* background */
-	[INIT]      =   "#191b19",     /* after initialization */
-	[INPUT]     =   "#1e2121",   /* during input */
-	[INPUT_ALT] =   "#25292f",   /* during input, second color */
-	[FAILED]    =   "#e58f98",   /* wrong password */
+	[BG]        =   "#1d2021",     /* background */
+	[INIT]      =   "#1d2021",     /* after initialization */
+	[INPUT]     =   "#282828",   /* during input */
+	[INPUT_ALT] =   "#32302f",   /* during input, second color */
+	[FAILED]    =   "#9d0006",   /* wrong password */
 };
 
 /* treat a cleared input like a wrong password (color) */
@@ -21,8 +21,8 @@ static const char * message = "   _   _   _   _   _   _   _   _  \n  / \\ / \\ /
 
 /* text color */
 static const char *text_colors[NUM_TEXTCOLS]  = {
-  [TXT_NORMAL] = "#ffffff",
-  [TXT_FAILED] = "#191b19",
+  [TXT_NORMAL] = "#fabd2f",
+  [TXT_FAILED] = "#fbf1c7",
 };
 
 /* text size (must be a valid size) */
